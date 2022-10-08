@@ -157,9 +157,10 @@ def main():
             message = 'Ошибка отправки сообщения в Telegram-чат'
             logging.error(message, exc_info=True)
             raise
-        except (RequestError, ServerError, UknownStatusError,
-            PropertyError, KeyError, TypeError,
-            ) as e:
+        except (
+            RequestError, ServerError, UknownStatusError, PropertyError, 
+            KeyError, TypeError,
+        ) as e:
             error_message = f'Сбой в работе программы: {e}'
             logging.error(error_message, exc_info=True)
             if last_error_message != error_message:

@@ -46,13 +46,13 @@ def send_message(bot: telegram.Bot, message: str) -> None:
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info('Сообщение успешно отправлено')
-    except Exception as e: 
-        logger.error('Ошибка отправки сообщения в Telegram-чат') 
+    except Exception as e:
+        logger.error('Ошибка отправки сообщения в Telegram-чат')
         raise NotSendingMessageError(
             'Ошибка отправки сообщения в Telegram-чат'
         )from e
 
-    
+
 def get_api_answer(current_timestamp: int) -> dict:
     """Делает запрос к единственному эндпоинту API-сервиса YaP."""
     timestamp = current_timestamp or int(time.time())
@@ -157,9 +157,9 @@ def main():
             message = 'Ошибка отправки сообщения в Telegram-чат'
             logging.error(message, exc_info=True)
             raise
-        except (RequestError, ServerError, UknownStatusError, 
-        PropertyError,  KeyError, TypeError,
-        ) as e:
+        except (RequestError, ServerError, UknownStatusError,
+            PropertyError, KeyError, TypeError,
+            ) as e:
             error_message = f'Сбой в работе программы: {e}'
             logging.error(error_message, exc_info=True)
             if last_error_message != error_message:

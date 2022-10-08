@@ -46,12 +46,13 @@ def send_message(bot: telegram.Bot, message: str) -> None:
     try:
         bot.send_message(TELEGRAM_CHAT_ID, message)
         logger.info('Сообщение успешно отправлено')
-    except NotSendingMessageError as e:
+    except Exception as e: 
+        logger.error('Ошибка отправки сообщения в Telegram-чат') 
         raise NotSendingMessageError(
             'Ошибка отправки сообщения в Telegram-чат'
         )from e
 
-
+    
 def get_api_answer(current_timestamp: int) -> dict:
     """Делает запрос к единственному эндпоинту API-сервиса YaP."""
     timestamp = current_timestamp or int(time.time())
@@ -63,7 +64,7 @@ def get_api_answer(current_timestamp: int) -> dict:
             'headers': HEADERS,
         }
         response = requests.get(**request_content)
-    except RequestError as e:
+    except Exception as e:
         logger.error('Сбой при запросе к эндпоинту')
         raise RequestError('Сбой при запросе к эндпоинту') from e
     if response.status_code != HTTPStatus.OK:
@@ -81,6 +82,11 @@ def check_response(response: dict) -> list:
     if not isinstance(response, dict):
         logger.error('Данные в виде словаря отсутствуют')
         raise TypeError('Данные в виде словаря отсутствуют')
+    current_date = response['current_date']
+    if current_date is None:
+        raise KeyError(
+            'Ключ current_date отсутствует в словаре homework'
+        )
     if not isinstance(response['homeworks'], list):
         logger.error('В словаре homeworks отсутствуют данные в виде списка')
         raise TypeError('В словаре homeworks отсутствуют данные в виде списка')
@@ -95,8 +101,6 @@ def check_response(response: dict) -> list:
 
 def parse_status(homework: dict) -> str:
     """Извлекает из информации о конкретной домашней работе ее статус."""
-    if len(homework) == 0:
-        logger.debug('Список домашних работ пуст')
     if 'homework_name' not in homework:
         logger.error(
             'Ключ homework_name отсутствует во вложенном словаре homework'
@@ -111,6 +115,7 @@ def parse_status(homework: dict) -> str:
         )
     homework_name = homework['homework_name']
     homework_status = homework['status']
+
     if homework_status not in HOMEWORK_VERDICTS:
         logger.error(f'Статус работы {homework_status} неизвестен')
         raise UknownStatusError(f'Статус работы {homework_status} неизвестен')
@@ -151,12 +156,16 @@ def main():
         except NotSendingMessageError:
             message = 'Ошибка отправки сообщения в Telegram-чат'
             logging.error(message, exc_info=True)
-        except Exception as e:
+            raise
+        except (RequestError, ServerError, UknownStatusError, 
+        PropertyError,  KeyError, TypeError,
+        ) as e:
             error_message = f'Сбой в работе программы: {e}'
             logging.error(error_message, exc_info=True)
             if last_error_message != error_message:
                 last_error_message = error_message
                 send_message(bot, error_message)
+            raise
         finally:
             time.sleep(RETRY_TIME)
 

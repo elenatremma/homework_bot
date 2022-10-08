@@ -158,7 +158,7 @@ def main():
             logging.error(message, exc_info=True)
             raise
         except (
-            RequestError, ServerError, UknownStatusError, PropertyError, 
+            RequestError, ServerError, UknownStatusError, PropertyError,
             KeyError, TypeError,
         ) as e:
             error_message = f'Сбой в работе программы: {e}'
@@ -168,7 +168,7 @@ def main():
                 send_message(bot, error_message)
             raise
         finally:
-            time.sleep(RETRY_TIME)
+            time.sleep(RETRY_TIME)git add . 
 
 
 if __name__ == '__main__':

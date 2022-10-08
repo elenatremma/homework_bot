@@ -168,7 +168,7 @@ def main():
                 send_message(bot, error_message)
             raise
         finally:
-            time.sleep(RETRY_TIME)git add . 
+            time.sleep(RETRY_TIME)
 
 
 if __name__ == '__main__':

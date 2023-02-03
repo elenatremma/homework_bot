@@ -37,9 +37,7 @@
       TELEGRAM_CHAT_ID
     </blockquote>
     <br>
-
-
-
-
+    
+![tg_bot1](https://user-images.githubusercontent.com/104749444/216549638-4e9027e6-c150-4ec9-bd52-225e0bee1415.jpg)
 
 Автор: Елена Трембовельская 
